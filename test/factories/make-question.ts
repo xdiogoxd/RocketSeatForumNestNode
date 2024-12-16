@@ -1,14 +1,14 @@
-import { faker } from '@faker-js/faker'
+import { faker } from '@faker-js/faker';
 
-import { UniqueEntityID } from '@/core/entities/unique-entity-id'
+import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import {
   Question,
   QuestionProps,
-} from '@/domain/forum/enterprise/entities/question'
+} from '@/domain/forum/enterprise/entities/question';
 
 export function makeQuestion(
   override: Partial<QuestionProps> = {},
-  id?: UniqueEntityID,
+  id?: UniqueEntityID
 ) {
   const question = Question.create(
     {
@@ -17,8 +17,8 @@ export function makeQuestion(
       content: faker.lorem.text(),
       ...override,
     },
-    id,
-  )
+    id
+  );
 
-  return question
+  return question;
 }
