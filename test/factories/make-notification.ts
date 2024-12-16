@@ -1,14 +1,14 @@
-import { faker } from '@faker-js/faker'
+import { faker } from '@faker-js/faker';
 
-import { UniqueEntityID } from '@/core/entities/unique-entity-id'
+import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import {
   Notification,
   NotificationProps,
-} from '@/domain/notification/enterprise/entities/notification'
+} from '@/domain/notification/enterprise/entities/notification';
 
 export function makeNotification(
   override: Partial<NotificationProps> = {},
-  id?: UniqueEntityID,
+  id?: UniqueEntityID
 ) {
   const notification = Notification.create(
     {
@@ -17,8 +17,8 @@ export function makeNotification(
       content: faker.lorem.sentence(10),
       ...override,
     },
-    id,
-  )
+    id
+  );
 
-  return notification
+  return notification;
 }

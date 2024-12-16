@@ -1,15 +1,15 @@
-import { faker } from '@faker-js/faker'
+import { faker } from '@faker-js/faker';
 
-import { UniqueEntityID } from '@/core/entities/unique-entity-id'
+import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 
 import {
   QuestionComment,
   QuestionCommentProps,
-} from '@/domain/forum/enterprise/entities/question-comment'
+} from '@/domain/forum/enterprise/entities/question-comment';
 
 export function makeQuestionComment(
   override: Partial<QuestionCommentProps> = {},
-  id?: UniqueEntityID,
+  id?: UniqueEntityID
 ) {
   const question = QuestionComment.create(
     {
@@ -18,8 +18,8 @@ export function makeQuestionComment(
       content: faker.lorem.text(),
       ...override,
     },
-    id,
-  )
+    id
+  );
 
-  return question
+  return question;
 }

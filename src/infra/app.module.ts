@@ -3,7 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { envSchema } from './env';
 import { HttpModule } from './http/http.module';
-import { DatabaseModule } from '@faker-js/faker/.';
+import { DataBaseModule } from './database/database.module';
 
 @Module({
   imports: [
@@ -13,7 +13,7 @@ import { DatabaseModule } from '@faker-js/faker/.';
     }),
     AuthModule,
     HttpModule,
-    DatabaseModule,
+    DataBaseModule,
   ],
 })
 export class AppModule {}
