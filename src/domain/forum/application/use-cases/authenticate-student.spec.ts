@@ -3,7 +3,6 @@ import { FakeHasher } from 'test/cryptography.ts/fake-hasher';
 import { AuthenticateStudentUseCase } from './authenticate-student';
 import { FakeEncryptor } from 'test/cryptography.ts/fake-encryptor';
 import { makeStudent } from 'test/factories/make-student';
-import { string } from 'zod';
 
 let inMemoryStudentsRepository: InMemoryStudentsRepository;
 let fakeHasher: FakeHasher;

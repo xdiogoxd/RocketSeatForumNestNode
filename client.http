@@ -14,7 +14,7 @@ Content-Type: application/json
 ###
 
 # @name authenticate
-POST j{{baseUrl}}/sessions
+POST {{baseUrl}}/sessions
 Content-Type: application/json
 
 {
@@ -29,7 +29,7 @@ Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-    "title": "Nova Pergunta",
+    "title": "Nova Pergunta123",
     "content": "conteúdo da pergunta"
 }
 ###
