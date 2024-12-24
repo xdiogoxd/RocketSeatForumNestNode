@@ -5,25 +5,28 @@ import { INestApplication } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
+import { AnswerFactory } from 'test/factories/make-answer';
 import { QuestionFactory } from 'test/factories/make-question';
 import { StudentFactory } from 'test/factories/make-student';
 
-describe('Fetch recent questions (E2E)', () => {
+describe('Fetch question answers (E2E)', () => {
   let app: INestApplication;
   let studentFactory: StudentFactory;
   let questionFactory: QuestionFactory;
+  let answerFactory: AnswerFactory;
   let jwt: JwtService;
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule, DataBaseModule],
-      providers: [StudentFactory, QuestionFactory],
+      providers: [StudentFactory, QuestionFactory, AnswerFactory],
     }).compile();
 
     app = moduleRef.createNestApplication();
 
     studentFactory = moduleRef.get(StudentFactory);
     questionFactory = moduleRef.get(QuestionFactory);
+    answerFactory = moduleRef.get(AnswerFactory);
 
     jwt = moduleRef.get(JwtService);
 
@@ -34,31 +37,38 @@ describe('Fetch recent questions (E2E)', () => {
 
     const accessToken = jwt.sign({ sub: user.id.toString() });
 
-    await questionFactory.makePrismaQuestion({
+    const question = await questionFactory.makePrismaQuestion({
       authorId: user.id,
       slug: Slug.create('question01'),
       title: 'Question 01',
       content: 'Question-01',
     });
 
-    await questionFactory.makePrismaQuestion({
+    const questionId = question.id.toString();
+
+    await answerFactory.makePrismaAnswer({
+      questionId: question.id,
       authorId: user.id,
-      title: 'Question 02',
-      content: 'Question-02',
-      slug: Slug.create('question02'),
+      content: 'Answer 1',
+    });
+
+    await answerFactory.makePrismaAnswer({
+      questionId: question.id,
+      authorId: user.id,
+      content: 'Answer 2',
     });
 
     const response = await request(app.getHttpServer())
-      .get('/questions')
+      .get(`/questions/${questionId}/answers`)
       .set('Authorization', `Bearer ${accessToken}`)
       .send();
 
     expect(response.statusCode).toBe(200);
 
     expect(response.body).toEqual({
-      questions: expect.arrayContaining([
-        expect.objectContaining({ title: 'Question 02' }),
-        expect.objectContaining({ title: 'Question 01' }),
+      answers: expect.arrayContaining([
+        expect.objectContaining({ content: 'Answer 1' }),
+        expect.objectContaining({ content: 'Answer 2' }),
       ]),
     });
   });
