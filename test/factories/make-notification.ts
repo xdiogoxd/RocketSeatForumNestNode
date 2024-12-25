@@ -22,3 +22,20 @@ export function makeNotification(
 
   return notification;
 }
+
+// @Injectable()
+// export class QuestionFactory {
+//   constructor(private prisma: PrismaService) {}
+
+//   async makePrismaQuestion(
+//     data: Partial<NotificationProps> = {}
+//   ): Promise<Notification> {
+//     const question = makeNotification(data);
+
+//     await this.prisma.comment.create({
+//       data: PrismaQuestionAttachmentMapper.toPrismaFormat(question),
+//     });
+
+//     return question;
+//   }
+// }
