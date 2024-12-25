@@ -1,4 +1,3 @@
-import { Slug } from '@/domain/forum/enterprise/entities/value-objects/slug';
 import { AppModule } from '@/infra/app.module';
 import { DataBaseModule } from '@/infra/database/database.module';
 import { PrismaService } from '@/infra/database/prisma/prisma.service';
@@ -7,21 +6,30 @@ import { JwtService } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { AnswerFactory } from 'test/factories/make-answer';
+import { AnswerCommentFactory } from 'test/factories/make-answer-comment';
+
 import { QuestionFactory } from 'test/factories/make-question';
+
 import { StudentFactory } from 'test/factories/make-student';
 
-describe('Edit answer (E2E)', () => {
+describe('Delete answer comment (E2E)', () => {
   let app: INestApplication;
   let studentFactory: StudentFactory;
-  let prisma: PrismaService;
   let questionFactory: QuestionFactory;
   let answerFactory: AnswerFactory;
+  let answerCommentFactory: AnswerCommentFactory;
+  let prisma: PrismaService;
   let jwt: JwtService;
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule, DataBaseModule],
-      providers: [StudentFactory, QuestionFactory, AnswerFactory],
+      providers: [
+        StudentFactory,
+        QuestionFactory,
+        AnswerCommentFactory,
+        AnswerFactory,
+      ],
     }).compile();
 
     app = moduleRef.createNestApplication();
@@ -31,42 +39,44 @@ describe('Edit answer (E2E)', () => {
     studentFactory = moduleRef.get(StudentFactory);
     questionFactory = moduleRef.get(QuestionFactory);
     answerFactory = moduleRef.get(AnswerFactory);
+    answerCommentFactory = moduleRef.get(AnswerCommentFactory);
 
     jwt = moduleRef.get(JwtService);
 
     await app.init();
   });
-  test('[POST] /questions/:questionId/answers', async () => {
+  test('[DELETE] /answers/comments/:id', async () => {
     const user = await studentFactory.makePrismaStudent();
 
     const accessToken = jwt.sign({ sub: user.id.toString() });
 
     const question = await questionFactory.makePrismaQuestion({
       authorId: user.id,
-      slug: Slug.create('question01'),
     });
 
     const answer = await answerFactory.makePrismaAnswer({
-      questionId: question.id,
       authorId: user.id,
+      questionId: question.id,
     });
 
-    const answerId = answer.id.toString();
+    const answerComment = await answerCommentFactory.makePrismaAnswerComment({
+      answerId: answer.id,
+      authorId: user.id,
+    });
+    const answerCommentId = answerComment.id.toString();
 
     const response = await request(app.getHttpServer())
-      .put(`/answers/${answerId}`)
+      .delete(`/answers/comments/${answerCommentId}`)
       .set('Authorization', `Bearer ${accessToken}`)
-      .send({
-        content: 'new answer content',
-      });
+      .send({});
     expect(response.statusCode).toBe(204);
 
-    const answerOnDatabase = await prisma.answer.findFirst({
+    const answerCommentOnDatabase = await prisma.comment.findUnique({
       where: {
-        content: 'new answer content',
+        id: answerCommentId,
       },
     });
 
-    expect(answerOnDatabase).toBeTruthy();
+    expect(answerCommentOnDatabase).toBeNull();
   });
 });
