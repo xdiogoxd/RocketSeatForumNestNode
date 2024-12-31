@@ -1,41 +1,49 @@
 import { InMemoryAttachmentsRepository } from 'test/repositories/in-memory-attachments-repository';
-import { RegisterStudentUseCase } from './register-student';
-import { FakeHasher } from 'test/cryptography.ts/fake-hasher';
 import { UploadAndCreateAttachmentUseCase } from './upload-and-create-attachment';
+import { FakeUploader } from 'test/storage/fakeUploader';
+import { InvalidAttachmentTypeError } from './errors/invalid-attachment-type-error';
 
 let inMemoryAttachmentsRepository: InMemoryAttachmentsRepository;
-let fakeHasher: FakeHasher;
-let sut: RegisterStudentUseCase;
+let fakeUploader: FakeUploader;
+let sut: UploadAndCreateAttachmentUseCase;
 
 describe('Create Question', () => {
   beforeEach(() => {
     inMemoryAttachmentsRepository = new InMemoryAttachmentsRepository();
-    fakeHasher = new FakeHasher();
-    sut = new UploadAndCreateAttachmentUseCase(inMemoryAttachmentsRepository, );
+    fakeUploader = new FakeUploader();
+
+    sut = new UploadAndCreateAttachmentUseCase(
+      inMemoryAttachmentsRepository,
+      fakeUploader
+    );
   });
 
-  it('should be able to register a new student', async () => {
+  it('should be able to upload and create an attachment', async () => {
     const result = await sut.execute({
-      name: 'John Doe',
-      email: 'johndoe@test.com',
-      password: '123456',
+      fileName: 'profile.png',
+      fileType: 'image/png',
+      body: Buffer.from(''),
     });
 
     expect(result.isRight()).toBe(true);
     expect(result.value).toEqual({
-      student: inMemoryAttachmentsRepository.items[0],
+      attachment: inMemoryAttachmentsRepository.items[0],
     });
+    expect(fakeUploader.uploads).toHaveLength(1);
+    expect(fakeUploader.uploads[0]).toEqual(
+      expect.objectContaining({
+        fileName: 'profile.png',
+      })
+    );
   });
-  it('should be able to hash student password', async () => {
+  it('should not be able to upload a file with a unsupported extention', async () => {
     const result = await sut.execute({
-      name: 'John Doe',
-      email: 'johndoe@test.com',
-      password: '123456',
+      fileName: 'profile.mp3',
+      fileType: 'audio/mp3',
+      body: Buffer.from(''),
     });
 
-    expect(result.isRight()).toBe(true);
-    expect(inMemoryAttachmentsRepository.items[0].password).toEqual(
-      '123456-hashed'
-    );
+    expect(result.isLeft()).toBe(true);
+    expect(result.value).toBeInstanceOf(InvalidAttachmentTypeError);
   });
 });
