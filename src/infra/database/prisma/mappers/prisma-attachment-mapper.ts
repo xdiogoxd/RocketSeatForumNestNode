@@ -3,7 +3,7 @@ import { Attachment } from '@/domain/forum/enterprise/entities/attachment';
 
 import { Attachment as PrismaAttachment, Prisma } from '@prisma/client';
 
-export class PrismaAttachmentsMapper {
+export class PrismaAttachmentMapper {
   static toDomain(raw: PrismaAttachment): Attachment {
     return Attachment.create(
       {
@@ -17,6 +17,7 @@ export class PrismaAttachmentsMapper {
     attachment: Attachment
   ): Prisma.AttachmentUncheckedCreateInput {
     return {
+      id: attachment.id.toString(),
       title: attachment.title,
       url: attachment.link,
     };

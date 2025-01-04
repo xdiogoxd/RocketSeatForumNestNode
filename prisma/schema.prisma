@@ -40,10 +40,10 @@ model Question {
   updatedAt    DateTime? @updatedAt @map("updated_at")
   authorid     String    @map("authorId")
   bestAnswerId String?   @unique @map("best_answer_id")
-  answers      Answer[]
 
   author      User         @relation(fields: [authorid], references: [id])
   bestAnswer  Answer?      @relation("bestAnswer", fields: [bestAnswerId], references: [id])
+  answers     Answer[]
   comments    Comment[]
   attachments Attachment[]
 

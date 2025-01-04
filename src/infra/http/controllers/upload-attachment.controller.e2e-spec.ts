@@ -5,7 +5,6 @@ import { JwtService } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { StudentFactory } from 'test/factories/make-student';
-import { string } from 'zod';
 
 describe('Add an attachment (E2E)', () => {
   let app: INestApplication;
@@ -37,7 +36,7 @@ describe('Add an attachment (E2E)', () => {
       .attach('file', './test/e2e/sample-upload.JPG');
     expect(response.statusCode).toBe(201);
     expect(response.body).toEqual({
-      attachmentId: expect.any(String),
+      id: expect.any(String),
     });
   });
 });

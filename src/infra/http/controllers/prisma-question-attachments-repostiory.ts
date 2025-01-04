@@ -1,8 +1,8 @@
 import { QuestionAttachmentsRepository } from '@/domain/forum/application/repositories/question-attachments-repository';
 import { QuestionAttachment } from '@/domain/forum/enterprise/entities/question-attachment';
+import { PrismaQuestionAttachmentMapper } from '@/infra/database/prisma/mappers/prisma-question-attachment.mapper';
+import { PrismaService } from '@/infra/database/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma.service';
-import { PrismaQuestionAttachmentMapper } from '../mappers/prisma-question-attachment.mapper';
 
 @Injectable()
 export class PrismaQuestionAttachmentsRepository
@@ -43,8 +43,8 @@ export class PrismaQuestionAttachmentsRepository
         questionId: QuestionId,
       },
     });
-    console.log(ids);
-    console.log(result);
+    console.log('ids' + ids);
+    console.log('result' + result);
   }
 
   async deleteMany(attachments: QuestionAttachment[]): Promise<void> {

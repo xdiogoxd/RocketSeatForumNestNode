@@ -2,7 +2,7 @@ import { AttachmentsRepository } from '@/domain/forum/application/repositories/a
 import { Attachment } from '@/domain/forum/enterprise/entities/attachment';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-import { PrismaAttachmentsMapper } from '../mappers/prisma-attachment-mapper';
+import { PrismaAttachmentMapper } from '../mappers/prisma-attachment-mapper';
 
 @Injectable()
 export class PrismaAttachmentsRepository implements AttachmentsRepository {
@@ -19,18 +19,18 @@ export class PrismaAttachmentsRepository implements AttachmentsRepository {
       return null;
     }
 
-    return PrismaAttachmentsMapper.toDomain(attachment);
+    return PrismaAttachmentMapper.toDomain(attachment);
   }
 
   async create(attachment: Attachment): Promise<void> {
-    const data = PrismaAttachmentsMapper.toPrismaFormat(attachment);
+    const data = PrismaAttachmentMapper.toPrismaFormat(attachment);
 
     await this.prisma.attachment.create({
       data,
     });
   }
   async delete(attachment: Attachment): Promise<void> {
-    const data = PrismaAttachmentsMapper.toPrismaFormat(attachment);
+    const data = PrismaAttachmentMapper.toPrismaFormat(attachment);
 
     await this.prisma.attachment.delete({
       where: {

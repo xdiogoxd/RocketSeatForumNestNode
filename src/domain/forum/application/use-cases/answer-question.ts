@@ -36,9 +36,9 @@ export class AnswerQuestionUseCase {
       questionId: new UniqueEntityID(questionId),
     });
 
-    const answerAttachments = attachmentsIds.map((attachmentId) => {
+    const answerAttachments = attachmentsIds.map((id) => {
       return AnswerAttachment.create({
-        attachmentId: new UniqueEntityID(attachmentId),
+        id: new UniqueEntityID(id),
         answerId: answer.id,
       });
     });

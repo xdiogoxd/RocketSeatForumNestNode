@@ -55,9 +55,9 @@ export class EditQuestionUseCase {
       currentQuestionAttachments
     );
 
-    const questionAttachments = attachmentsIds.map((attachmentId) => {
+    const questionAttachments = attachmentsIds.map((id) => {
       return QuestionAttachment.create({
-        attachmentId: new UniqueEntityID(attachmentId),
+        id: new UniqueEntityID(id),
         questionId: question.id,
       });
     });

@@ -11,7 +11,7 @@ export class PrismaAnswerAttachmentMapper {
     return AnswerAttachment.create(
       {
         answerId: new UniqueEntityID(raw.answerId),
-        attachmentId: new UniqueEntityID(raw.id),
+        id: new UniqueEntityID(raw.id),
       },
       new UniqueEntityID(raw.id)
     );
