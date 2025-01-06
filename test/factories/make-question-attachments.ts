@@ -4,9 +4,10 @@ import {
   QuestionAttachment,
   QuestionAttachmentProps,
 } from '@/domain/forum/enterprise/entities/question-attachment';
+import { PrismaService } from '@/infra/database/prisma/prisma.service';
+import { Injectable } from '@nestjs/common';
 // import { PrismaQuestionAttachmentMapper } from '@/infra/database/prisma/mappers/prisma-question-attachment.mapper';
 // import { PrismaService } from '@/infra/database/prisma/prisma.service';
-// import { Injectable } from '@nestjs/common';
 
 export function makeQuestionAttachment(
   override: Partial<QuestionAttachmentProps> = {},
@@ -24,19 +25,24 @@ export function makeQuestionAttachment(
   return questionAttachment;
 }
 
-// @Injectable()
-// export class QuestionFactory {
-//   constructor(private prisma: PrismaService) {}
+@Injectable()
+export class QuestionAttachmentFactory {
+  constructor(private prisma: PrismaService) {}
 
-//   async makePrismaQuestion(
-//     data: Partial<QuestionAttachmentProps> = {}
-//   ): Promise<QuestionAttachment> {
-//     const question = makeQuestionAttachment(data);
+  async makePrismaQuestionAttachment(
+    data: Partial<QuestionAttachmentProps> = {}
+  ): Promise<QuestionAttachment> {
+    const questionAttachment = makeQuestionAttachment(data);
 
-//     await this.prisma.attachment.create({
-//       data: PrismaQuestionAttachmentMapper.toPrismaFormat(question),
-//     });
+    await this.prisma.attachment.update({
+      where: {
+        id: questionAttachment.id.toString(),
+      },
+      data: {
+        questionId: questionAttachment.questionId.toString(),
+      },
+    });
 
-//     return question;
-//   }
-// }
+    return questionAttachment;
+  }
+}

@@ -18,6 +18,48 @@ export class PrismaAnswerAttachmentsRepository
     });
     return result.map(PrismaAnswerAttachmentMapper.toDomain);
   }
+
+  async createMany(attachments: AnswerAttachment[]): Promise<void> {
+    if (attachments.length === 0) {
+      return;
+    }
+
+    const ids = attachments.map((attachment) => {
+      return attachment.id.toString();
+    });
+
+    const QuestionId = attachments[0].answerId.toString();
+
+    await this.prisma.attachment.updateMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+      data: {
+        answerId: QuestionId,
+      },
+    });
+  }
+
+  async deleteMany(attachments: AnswerAttachment[]): Promise<void> {
+    if (attachments.length === 0) {
+      return;
+    }
+
+    const ids = attachments.map((attachment) => {
+      return attachment.id.toString();
+    });
+
+    await this.prisma.attachment.deleteMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
+  }
+
   async deleteManyByAnswerId(answerId: string): Promise<void> {
     const result = await this.prisma.attachment.findMany({
       where: {

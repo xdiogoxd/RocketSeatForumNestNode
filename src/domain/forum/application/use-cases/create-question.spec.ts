@@ -40,7 +40,7 @@ describe('Create Question', () => {
     ]);
   });
 
-  it('should persist attachemtns when creating a question', async () => {
+  it('should persist attachments when creating a question', async () => {
     const result = await sut.execute({
       authorId: '1',
       title: 'Nova pergunta',

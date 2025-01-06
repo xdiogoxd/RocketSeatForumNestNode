@@ -33,7 +33,7 @@ export class PrismaQuestionAttachmentsRepository
 
     const QuestionId = attachments[0].questionId.toString();
 
-    const result = await this.prisma.attachment.updateMany({
+    await this.prisma.attachment.updateMany({
       where: {
         id: {
           in: ids,
@@ -43,8 +43,6 @@ export class PrismaQuestionAttachmentsRepository
         questionId: QuestionId,
       },
     });
-    console.log(ids);
-    console.log(result);
   }
 
   async deleteMany(attachments: QuestionAttachment[]): Promise<void> {

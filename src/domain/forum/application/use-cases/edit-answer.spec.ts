@@ -87,4 +87,47 @@ describe('Edit Answer', () => {
     expect(result.isLeft()).toBe(true);
     expect(result.value).toBeInstanceOf(NotAllowedError);
   });
+
+  it('should be able to edit a answer', async () => {
+    const newAnswer = makeAnswer(
+      {
+        authorId: new UniqueEntityID('author-1'),
+      },
+      new UniqueEntityID('question-1')
+    );
+
+    await inMemoryAnswersRepository.create(newAnswer);
+
+    inMemoryAnswerAttachmentsRepository.items.push(
+      makeAnswerAttachment({
+        answerId: newAnswer.id,
+        id: new UniqueEntityID('1'),
+      }),
+      makeAnswerAttachment({
+        answerId: newAnswer.id,
+        id: new UniqueEntityID('2'),
+      })
+    );
+
+    await sut.execute({
+      answerId: newAnswer.id.toValue(),
+      authorId: 'author-1',
+      content: 'Conteúdo teste',
+      attachmentsIds: ['1', '3'],
+    });
+
+    expect(inMemoryAnswersRepository.items[0]).toMatchObject({
+      content: 'Conteúdo teste',
+    });
+
+    expect(
+      inMemoryAnswersRepository.items[0].attachments.currentItems
+    ).toHaveLength(2);
+    expect(inMemoryAnswersRepository.items[0].attachments.currentItems).toEqual(
+      [
+        expect.objectContaining({ id: new UniqueEntityID('1') }),
+        expect.objectContaining({ id: new UniqueEntityID('3') }),
+      ]
+    );
+  });
 });
